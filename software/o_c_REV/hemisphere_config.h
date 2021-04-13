@@ -11,7 +11,7 @@
 // * Category filtering is deprecated at 1.8, but I'm leaving the per-applet categorization
 // alone to avoid breaking forked codebases by other developers.
 
-#define HEMISPHERE_AVAILABLE_APPLETS 53
+#define HEMISPHERE_AVAILABLE_APPLETS 51
 
 //////////////////  id  cat   class name
 #define HEMISPHERE_APPLETS { \
@@ -29,6 +29,7 @@
     DECLARE_APPLET(  6, 0x04, ClockDivider), \
     DECLARE_APPLET( 28, 0x04, ClockSkip), \
     DECLARE_APPLET( 30, 0x10, Compare), \
+    DECLARE_APPLET( 99, 0x10, Crash), \
     DECLARE_APPLET( 24, 0x02, CVRecV2), \
     DECLARE_APPLET( 55, 0x80, DrCrusher), \
     DECLARE_APPLET(  9, 0x08, DualQuant), \
@@ -40,8 +41,6 @@
     DECLARE_APPLET( 10, 0x44, Logic), \
     DECLARE_APPLET( 21, 0x01, LowerRenz), \
     DECLARE_APPLET( 50, 0x04, Metronome), \
-    DECLARE_APPLET(150, 0x20, hMIDIIn), \
-    DECLARE_APPLET( 27, 0x20, hMIDIOut), \
     DECLARE_APPLET( 33, 0x10, MixerBal), \
     DECLARE_APPLET( 20, 0x02, Palimpsest), \
     DECLARE_APPLET( 44, 0x01, RunglBook), \
@@ -58,7 +57,6 @@
     DECLARE_APPLET( 57, 0x01, Stairs), \
     DECLARE_APPLET(  3, 0x10, Switch), \
     DECLARE_APPLET( 58, 0x01, TB_3PO), \
-    DECLARE_APPLET( 13, 0x40, TLNeuron), \
     DECLARE_APPLET( 37, 0x40, Trending), \
     DECLARE_APPLET( 11, 0x06, TrigSeq), \
     DECLARE_APPLET( 25, 0x06, TrigSeq16), \
@@ -69,4 +67,7 @@
     DECLARE_APPLET( 54, 0x01, VectorMorph), \
     DECLARE_APPLET( 43, 0x10, Voltage), \
 }
-/*    DECLARE_APPLET(127, 0x80, DIAGNOSTIC), \ */
+/* DECLARE_APPLET(127, 0x80, DIAGNOSTIC), \ */
+/* DECLARE_APPLET( 13, 0x40, TLNeuron), \ */
+/* DECLARE_APPLET(150, 0x20, hMIDIIn), \ */
+/* DECLARE_APPLET( 27, 0x20, hMIDIOut), \ */
