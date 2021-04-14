@@ -50,6 +50,12 @@ OC::App available_apps[] = {
   #ifdef ENABLE_APP_PONG
     DECLARE_APP('P','O', "Pong", PONGGAME),
   #endif
+
+  // Nandemo
+  #ifdef ENABLE_APP_THREESOME
+    DECLARE_APP('T','H', "Threesome", Threesome),
+  #endif
+
   DECLARE_APP('B','R', "Backup / Restore", Backup),
   DECLARE_APP('S','E', "Setup / About", Settings),
 };

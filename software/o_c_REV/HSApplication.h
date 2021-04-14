@@ -47,6 +47,9 @@ typedef int32_t simfloat;
 #define PULSE_VOLTAGE 5
 #endif
 
+// Like HemispherApplet
+#define ForEachChannelAll(ch) for(int ch = 0; ch < 4; ch++)
+
 class HSApplication {
 public:
     virtual void Start();
@@ -270,6 +273,16 @@ protected:
         cursor_countdown = HSAPPLICATION_CURSOR_TICKS;
     }
 
+    //Nandemo: Helpful
+    int ProportionCV(int cv_value, int max_pixels) {
+        int prop = constrain(Proportion(cv_value, HSAPPLICATION_5V, max_pixels), 0, max_pixels);
+        return prop;
+    }
+
+    int ProportionCV(int cv_value, int min_pixels, int max_pixels) {
+        int prop = constrain(Proportion(cv_value, HSAPPLICATION_5V, max_pixels), min_pixels, max_pixels);
+        return prop;
+    }
 private:
     int clock_countdown[4]; // For clock output timing
     int adc_lag_countdown[4]; // Lag countdown for each input channel
