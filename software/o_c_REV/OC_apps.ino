@@ -52,8 +52,8 @@ OC::App available_apps[] = {
   #endif
 
   // Nandemo
-  #ifdef ENABLE_APP_THREESOME
-    DECLARE_APP('T','H', "Threesome", Threesome),
+  #ifdef ENABLE_APP_JUGGLER
+    DECLARE_APP('J','U', "Juggler", Juggler),
   #endif
 
   DECLARE_APP('B','R', "Backup / Restore", Backup),

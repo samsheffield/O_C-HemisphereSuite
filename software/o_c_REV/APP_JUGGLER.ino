@@ -1,4 +1,4 @@
-// 3 Way by Sam Sheffield, 2021
+// Juggler by Sam Sheffield, 2021
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,26 +19,26 @@
 // SOFTWARE.
 
 /*
-    Channel 1: Controllers (clock, input cv selector)
+    Channel 1: Controllers (clock, input cv selector), mix vca
     Channels 2,3,4: VCA input cv, output cv)
     Encoder 1: Toggle Gate CV Trigger outputs
     Not sure that this will be great for audio without downsampling occuring
     But CV should be totally fine
 
 */
-#ifdef ENABLE_APP_THREESOME
+#ifdef ENABLE_APP_JUGGLER
 
 #include "HSApplication.h"
 #include "HSMIDI.h"
 
 #define NUMBER_OF_MODES 3
 
-class Threesome : public HSApplication, public SystemExclusiveHandler {
+class Juggler : public HSApplication, public SystemExclusiveHandler {
 public:
 	void Start() {
         selected = 0;
-        defaultRectScale = 16;
-
+        startScale = 8;
+        
         ForEachChannelAll(ch){
             Out(ch, 0);
         }
@@ -71,7 +71,7 @@ public:
             ForEachChannelAll(ch){
                 Out(ch, ch == activeOut ? DetentedIn(activeOut) : 0);
             }
-            rectScale = RectScaler(activeOut, defaultRectScale-5, 21);
+            cScale = scaler(activeOut, 3, 12);
             // Send selected CV through Out 0
             Out(0, DetentedIn(activeOut));
             break;
@@ -89,11 +89,10 @@ public:
         default:
             break;
         }
-
     }
 
     void View() {
-        gfxHeader("Threesome");
+        gfxHeader("Juggler");
         DrawInterface();
     }
 
@@ -142,115 +141,116 @@ private:
     int selected;
     int mode;
     int activeOut;
-    int rectScale;
-    int defaultRectScale;
+    int cScale;
+    int startScale;
+
+    int x[4] = {15, 45, 75, 105};
+    int y[4] = {42, 42, 42, 42};
     const char* mode_name[NUMBER_OF_MODES];
+
 
     void DrawInterface() {
         gfxPrint(1, 15, mode_name[selected]);
-        gfxPrint(1, 25, activeOut);
+        gfxPrint(1, 25, cScale);
 
-        // Graphic
-
-        gfxPrint(20, 43, "B");
-        gfxPrint(65, 23, "C");
-        gfxPrint(102, 55, "D");
-        
+        // Graphics
 
         // Set default frames
         if(activeOut != 1){
-            gfxFrame(15, 38, defaultRectScale, defaultRectScale);
+            gfxCircle(x[1], y[1], startScale);
         }
         if (activeOut != 2){
-            gfxFrame(60, 18, defaultRectScale, defaultRectScale);
+            gfxCircle(x[2], y[2], startScale);
         }
         if (activeOut != 3){
-            gfxFrame(97, 50, defaultRectScale, defaultRectScale);
+            gfxCircle(x[3], y[3], startScale);
         }
         
+        gfxCircle(x[activeOut], y[activeOut], cScale + 5);
+
         // Scale frames based on CV input
-        switch (activeOut)
+       /* switch (activeOut)
         {
         case 1:
-            gfxFrame(15 + defaultRectScale/2 - (rectScale/2), 38 + defaultRectScale/2 - (rectScale/2), rectScale, rectScale);
+            gfxCircle(x[1] + startScale/2 - (scale/2), y[1] + startScale/2 - (scale/2), scale);
             break;
         case 2:
-            gfxFrame(60 + defaultRectScale/2 - (rectScale/2), 18  + defaultRectScale/2 - (rectScale/2), rectScale, rectScale);
+            gfxCircle(x[2] + startScale/2 - (scale/2), y[2]  + startScale/2 - (scale/2), scale);
             break;
         case 3:
-            gfxFrame(97  + defaultRectScale/2 - (rectScale/2), 50  + defaultRectScale/2 - (rectScale/2), rectScale, rectScale);
+            gfxCircle(x[3]  + startScale/2 - (scale/2), y[3]  + startScale/2 - (scale/2), scale);
             break;
         default:
             break;
-        }
+        }*/
         
     }
 
-    int RectScaler(int ch, int min, int max){
-        return ProportionCV(In(ch), min, max);
+    int scaler(int ch, int min, int max){
+        return ProportionCV(In(ch),min, max);
     }
     
 };
 
-Threesome Threesome_instance;
+Juggler Juggler_instance;
 
 // App stubs
-void Threesome_init() {
-    Threesome_instance.BaseStart();
+void Juggler_init() {
+    Juggler_instance.BaseStart();
 }
 
 // Not using O_C Storage
-size_t Threesome_storageSize() {return 0;}
-size_t Threesome_save(void *storage) {return 0;}
-size_t Threesome_restore(const void *storage) {return 0;}
+size_t Juggler_storageSize() {return 0;}
+size_t Juggler_save(void *storage) {return 0;}
+size_t Juggler_restore(const void *storage) {return 0;}
 
-void Threesome_isr() {
-	return Threesome_instance.BaseController();
+void Juggler_isr() {
+	return Juggler_instance.BaseController();
 }
 
-void Threesome_handleAppEvent(OC::AppEvent event) {
+void Juggler_handleAppEvent(OC::AppEvent event) {
     if (event ==  OC::APP_EVENT_RESUME) {
-        Threesome_instance.Resume();
+        Juggler_instance.Resume();
     }
     if (event == OC::APP_EVENT_SUSPEND) {
-        Threesome_instance.OnSendSysEx();
+        Juggler_instance.OnSendSysEx();
     }
 }
 
-void Threesome_loop() {} // Deprecated
+void Juggler_loop() {} // Deprecated
 
-void Threesome_menu() {
-    Threesome_instance.BaseView();
+void Juggler_menu() {
+    Juggler_instance.BaseView();
 }
 
-void Threesome_screensaver() {} // Deprecated
+void Juggler_screensaver() {} // Deprecated
 
-void Threesome_handleButtonEvent(const UI::Event &event) {
+void Juggler_handleButtonEvent(const UI::Event &event) {
     // For left encoder, handle press and long press
     if (event.control == OC::CONTROL_BUTTON_L) {
-        if (event.type == UI::EVENT_BUTTON_LONG_PRESS) Threesome_instance.OnLeftButtonLongPress();
-        else Threesome_instance.OnLeftButtonPress();
+        if (event.type == UI::EVENT_BUTTON_LONG_PRESS) Juggler_instance.OnLeftButtonLongPress();
+        else Juggler_instance.OnLeftButtonPress();
     }
 
     // For right encoder, only handle press (long press is reserved)
-    if (event.control == OC::CONTROL_BUTTON_R && event.type == UI::EVENT_BUTTON_PRESS) Threesome_instance.OnRightButtonPress();
+    if (event.control == OC::CONTROL_BUTTON_R && event.type == UI::EVENT_BUTTON_PRESS) Juggler_instance.OnRightButtonPress();
 
     // For up button, handle only press (long press is reserved)
-    if (event.control == OC::CONTROL_BUTTON_UP) Threesome_instance.OnUpButtonPress();
+    if (event.control == OC::CONTROL_BUTTON_UP) Juggler_instance.OnUpButtonPress();
 
     // For down button, handle press and long press
     if (event.control == OC::CONTROL_BUTTON_DOWN) {
-        if (event.type == UI::EVENT_BUTTON_PRESS) Threesome_instance.OnDownButtonPress();
-        if (event.type == UI::EVENT_BUTTON_LONG_PRESS) Threesome_instance.OnDownButtonLongPress();
+        if (event.type == UI::EVENT_BUTTON_PRESS) Juggler_instance.OnDownButtonPress();
+        if (event.type == UI::EVENT_BUTTON_LONG_PRESS) Juggler_instance.OnDownButtonLongPress();
     }
 }
 
-void Threesome_handleEncoderEvent(const UI::Event &event) {
+void Juggler_handleEncoderEvent(const UI::Event &event) {
     // Left encoder turned
-    if (event.control == OC::CONTROL_ENCODER_L) Threesome_instance.OnLeftEncoderMove(event.value);
+    if (event.control == OC::CONTROL_ENCODER_L) Juggler_instance.OnLeftEncoderMove(event.value);
 
     // Right encoder turned
-    if (event.control == OC::CONTROL_ENCODER_R) Threesome_instance.OnRightEncoderMove(event.value);
+    if (event.control == OC::CONTROL_ENCODER_R) Juggler_instance.OnRightEncoderMove(event.value);
 }
 
 #endif

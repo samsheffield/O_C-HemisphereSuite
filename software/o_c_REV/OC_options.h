@@ -34,7 +34,7 @@
 //#define ENABLE_APP_PONG
 
 // Nandemo
-#define ENABLE_APP_THREESOME
+#define ENABLE_APP_JUGGLER
 
 // Define this to include some new, custom scales for Hemispheres Logarhythm Mod (optional if porting individual applets)
 // This uses approximately 640 additional bytes of program storage space
