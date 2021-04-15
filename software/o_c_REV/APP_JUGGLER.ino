@@ -31,20 +31,25 @@
 #include "HSApplication.h"
 #include "HSMIDI.h"
 
-#define NUMBER_OF_MODES 3
+#define NUMBER_OF_MODES 2
 
 class Juggler : public HSApplication, public SystemExclusiveHandler {
 public:
 	void Start() {
         selected = 0;
-        startScale = 8;
-        lowestPoint = 64-startScale-3;
-        highestPoint = 10+startScale*2;
+        size = 8;
+        cvSize = size * 2;
+        spacing = 32;
+        lowestPoint = 64-size-3;
+        highestPoint = TopAlign(1) + size*2;
+    
         ForEachChannelAll(ch){
             Out(ch, 0);
+            x[ch] = (spacing * ch) + spacing/2;
+            y[ch] = CenterAlign();
         }
         // Why this way?
-        const char * mode_name_list[] = {"CV", "GATE", "TRIG"};
+        const char * mode_name_list[] = {"CV", "GATE"};
         for(int i = 0; i < NUMBER_OF_MODES; i++)
         {
             mode_name[i] = mode_name_list[i];
@@ -81,15 +86,15 @@ public:
 
             break;
         case 1:
+        // Gate mode
             ForEachChannelAll(ch){
+                // Center y Position
+                y[ch] = CenterAlign();
                 GateOut(ch, ch == activeOut ? true : false);
             }
-            
+            // This is for CV management
+            ypos = CenterAlign();
             GateOut(0, false);
-            // Gate mode
-            break;
-        case 2:
-            // Trigger mode
             break;
         default:
             break;
@@ -143,40 +148,41 @@ public:
 
 private:
     int8_t cursor;
-    int selected;
-    int mode;
-    int activeOut;
-    int startScale;
-
-    int x[4] = {15, 45, 75, 105};
-    int y[4] = {42, 42, 42, 42};
-    int lowestPoint, highestPoint;
-    int ypos;
+    int8_t selected;
+    int8_t activeOut;
+    int8_t size, cvSize;
+    uint8_t spacing;
+    // Default positions
+    int8_t lowestPoint, highestPoint;
+    uint8_t x[4];
+    int8_t y[4];
+    // Dynamic position
+    int8_t ypos;
     const char* mode_name[NUMBER_OF_MODES];
 
-
     void DrawInterface() {
-        gfxPrint(1, 15, mode_name[selected]);
-        //gfxPrint(1, 25, ypos);
+        gfxPrint(1, TopAlign(3), mode_name[selected]);
+        gfxCursor(1, TopAlign(12), selected == 0 ? 12 : 24);
 
-        // CV 
-        gfxCircle(x[0], map(DetentedIn(0), -HSAPPLICATION_3V, HSAPPLICATION_5V, lowestPoint, highestPoint), startScale);
-        // Graphics
-        gfxCircle(x[activeOut], ypos, startScale + 1);
+        // CV signal visualization
+        gfxFrame(x[0]-cvSize/2, map(DetentedIn(0), -HSAPPLICATION_3V, HSAPPLICATION_5V, (lowestPoint-cvSize/2)-4, highestPoint-cvSize/2)+4, cvSize, cvSize);
+        
+        // Visualization
+        gfxCircle(x[activeOut], ypos, size + 1);
 
         // Clunky freeze states
         if(activeOut != 1){
-            gfxCircle(x[2], y[2], startScale);
-            gfxCircle(x[3], y[3], startScale);
+            gfxCircle(x[2], y[2], size);
+            gfxCircle(x[3], y[3], size);
         }
         if(activeOut != 2){
-            gfxCircle(x[1], y[1], startScale);
-            gfxCircle(x[3], y[3], startScale);
+            gfxCircle(x[1], y[1], size);
+            gfxCircle(x[3], y[3], size);
         }
 
         if(activeOut != 3){
-            gfxCircle(x[1], y[1], startScale);
-            gfxCircle(x[2], y[2], startScale);
+            gfxCircle(x[1], y[1], size);
+            gfxCircle(x[2], y[2], size);
         }
     }    
 };

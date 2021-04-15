@@ -47,8 +47,13 @@ typedef int32_t simfloat;
 #define PULSE_VOLTAGE 5
 #endif
 
-// Like HemispherApplet
+// HemispherApplet-like functions
 #define ForEachChannelAll(ch) for(int ch = 0; ch < 4; ch++)
+#define BottomAlign(h) (62 - h)
+
+// Helpful functions
+#define TopAlign(h) (13 + h)
+#define CenterAlign() 44
 
 class HSApplication {
 public:
