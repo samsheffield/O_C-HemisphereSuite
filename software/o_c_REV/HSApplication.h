@@ -275,12 +275,12 @@ protected:
 
     //Nandemo: Helpful
     int ProportionCV(int cv_value, int max_pixels) {
-        int prop = constrain(Proportion(cv_value, HSAPPLICATION_5V, max_pixels), -HSAPPLICATION_3V, max_pixels);
+        int prop = constrain(Proportion(cv_value, HSAPPLICATION_5V, max_pixels), 0, max_pixels);
         return prop;
     }
 
     int ProportionCV(int cv_value, int min_pixels, int max_pixels) {
-        int prop = constrain(Proportion(cv_value, HSAPPLICATION_5V, max_pixels + min_pixels), Proportion(cv_value, -HSAPPLICATION_3V, min_pixels), max_pixels);
+        int prop = constrain(Proportion(cv_value, HSAPPLICATION_5V, max_pixels), min_pixels, max_pixels);
         return prop;
     }
 private:

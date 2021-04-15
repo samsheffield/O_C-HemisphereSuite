@@ -38,7 +38,8 @@ public:
 	void Start() {
         selected = 0;
         startScale = 8;
-        
+        lowestPoint = 64-startScale-3;
+        highestPoint = 10+startScale*2;
         ForEachChannelAll(ch){
             Out(ch, 0);
         }
@@ -71,9 +72,13 @@ public:
             ForEachChannelAll(ch){
                 Out(ch, ch == activeOut ? DetentedIn(activeOut) : 0);
             }
-            cScale = scaler(activeOut, 3, 12);
+            ypos = map(DetentedIn(activeOut), -HSAPPLICATION_3V, HSAPPLICATION_5V, lowestPoint, highestPoint);
+            y[activeOut] = ypos;
             // Send selected CV through Out 0
             Out(0, DetentedIn(activeOut));
+
+           // typos = constrain(Proportion(DetentedIn(activeOut), HSAPPLICATION_5V, 20), 60, 20);
+
             break;
         case 1:
             ForEachChannelAll(ch){
@@ -141,55 +146,39 @@ private:
     int selected;
     int mode;
     int activeOut;
-    int cScale;
     int startScale;
 
     int x[4] = {15, 45, 75, 105};
     int y[4] = {42, 42, 42, 42};
+    int lowestPoint, highestPoint;
+    int ypos;
     const char* mode_name[NUMBER_OF_MODES];
 
 
     void DrawInterface() {
         gfxPrint(1, 15, mode_name[selected]);
-        gfxPrint(1, 25, cScale);
+        //gfxPrint(1, 25, ypos);
 
+        // CV 
+        gfxCircle(x[0], map(DetentedIn(0), -HSAPPLICATION_3V, HSAPPLICATION_5V, lowestPoint, highestPoint), startScale);
         // Graphics
+        gfxCircle(x[activeOut], ypos, startScale + 1);
 
-        // Set default frames
+        // Clunky freeze states
         if(activeOut != 1){
-            gfxCircle(x[1], y[1], startScale);
-        }
-        if (activeOut != 2){
             gfxCircle(x[2], y[2], startScale);
-        }
-        if (activeOut != 3){
             gfxCircle(x[3], y[3], startScale);
         }
-        
-        gfxCircle(x[activeOut], y[activeOut], cScale + 5);
+        if(activeOut != 2){
+            gfxCircle(x[1], y[1], startScale);
+            gfxCircle(x[3], y[3], startScale);
+        }
 
-        // Scale frames based on CV input
-       /* switch (activeOut)
-        {
-        case 1:
-            gfxCircle(x[1] + startScale/2 - (scale/2), y[1] + startScale/2 - (scale/2), scale);
-            break;
-        case 2:
-            gfxCircle(x[2] + startScale/2 - (scale/2), y[2]  + startScale/2 - (scale/2), scale);
-            break;
-        case 3:
-            gfxCircle(x[3]  + startScale/2 - (scale/2), y[3]  + startScale/2 - (scale/2), scale);
-            break;
-        default:
-            break;
-        }*/
-        
-    }
-
-    int scaler(int ch, int min, int max){
-        return ProportionCV(In(ch),min, max);
-    }
-    
+        if(activeOut != 3){
+            gfxCircle(x[1], y[1], startScale);
+            gfxCircle(x[2], y[2], startScale);
+        }
+    }    
 };
 
 Juggler Juggler_instance;
