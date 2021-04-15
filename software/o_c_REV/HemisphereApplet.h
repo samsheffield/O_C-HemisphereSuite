@@ -437,7 +437,7 @@ protected:
      *
      * if (Clock(ch)) StartADCLag(ch);
      *
-     * if (EndOfADCLog(ch)) {
+     * if (EndOfADCLag(ch)) {
      *     int cv = In(ch);
      *     // etc...
      * }

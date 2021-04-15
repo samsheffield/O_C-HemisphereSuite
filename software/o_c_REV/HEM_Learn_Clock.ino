@@ -8,7 +8,6 @@
 // (6) Increment HEMISPHERE_AVAILABLE_APPLETS in hemisphere_config.h
 // (7) Add your name and any additional copyright info to the block below
 
-// Copyright (c) 2018, __________
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +27,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// Experimenting with clock, S&H, and random number generation. 
+// Just to try and figure out how it works
+
 class LearnClock : public HemisphereApplet {
 public:
 
@@ -36,14 +38,25 @@ public:
     }
 
     void Start() {
-
+        cv[0] = 0;
+        cv[1] = 0;
+        rng = random(-HEMISPHERE_3V_CV, HEMISPHERE_MAX_CV);
     }
 
     void Controller() {
-        ForEachChannel(ch){
-            if(Clock(ch)){
-                ClockOut(ch);
+        if (Clock(0)){ 
+            StartADCLag();
+    
+            if (EndOfADCLag(0)) {
+                //cv[ch] = In(ch);
             }
+            rng = random(-HEMISPHERE_3V_CV, HEMISPHERE_MAX_CV);
+            cv[0] = rng;
+            Out(0, cv[0], 0);
+
+            // Set the second argument to create longer gates or shorter triggers
+            ClockOut(1, 10);
+            
         }
     }
 
@@ -53,6 +66,9 @@ public:
     }
 
     void OnButtonPress() {
+        rng = random(-HEMISPHERE_3V_CV, HEMISPHERE_MAX_CV);
+        cv[0] = rng;
+        Out(0, cv[0], 0);
     }
 
     void OnEncoderMove(int direction) {
@@ -73,19 +89,22 @@ public:
 protected:
     void SetHelp() {
         //                               "------------------" <-- Size Guide
-        help[HEMISPHERE_HELP_DIGITALS] = "Digital in help";
-        help[HEMISPHERE_HELP_CVS]      = "CV in help";
-        help[HEMISPHERE_HELP_OUTS]     = "Out help";
-        help[HEMISPHERE_HELP_ENCODER]  = "123456789012345678";
+        help[HEMISPHERE_HELP_DIGITALS] = "A:Clock RNG";
+        help[HEMISPHERE_HELP_CVS]      = "A:CV In";
+        help[HEMISPHERE_HELP_OUTS]     = "A:RNG B:TRG";
+        help[HEMISPHERE_HELP_ENCODER]  = "BTN:RNG";
         //                               "------------------" <-- Size Guide
     }
     
 private:
     int cursor;
+    int cv[2];
+    int rng;
     
     void DrawInterface() {
         gfxSkyline();
     }
+
 };
 
 
