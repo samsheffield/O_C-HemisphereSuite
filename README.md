@@ -1,11 +1,11 @@
 Hemisphere Suite: Alternate Alternate Firmware for Ornament and Crime (Nandemo Branch)
 ===
 
-### new
+### new stuff:
 
 Crash - VC controllable version of Dr Crusher (Applet)
 
-Juggler - Weird 3-way switch that can pass CV (Independently on B, C, and D, and sequentially? mixed? on A). There's a gated out mode too.
+Juggler - Weird 3-way switch that can pass CV (Independently on B, C, and D, and sequentially? mixed? on A). There's a gated out mode too. (Application)
 
 
 ### firmware:
