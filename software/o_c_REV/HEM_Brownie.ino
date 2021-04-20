@@ -16,7 +16,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// d2 gate semi octave toggle
 
+#define HISTORY_SIZE 16
 
 class Brownie : public HemisphereApplet {
 public:
@@ -29,6 +31,17 @@ public:
         // Semitone 128
         // Octave 1536 or 12<<7
         stepSize = 128;
+        const char * modes[] = {"SEMI", "OCTV"};
+        for (int i = 0; i < 2; i++)
+        {
+            modeNames[i] = modes[i];
+        }
+        for (int i = 0; i < 32; i++)
+        {
+            xHistory[i] = -10;
+            yHistory[i] = -10;
+        }
+        currentCount = 31;
     }
 
     void Controller() {
@@ -37,6 +50,7 @@ public:
             stepX += random(-1,2);
             stepY += random(-1,2);
 
+            stepSize = selected == 0 ? 128 : (12<<7);
             // limit cv x, y
             cvPosition[0] = constrain(stepX * stepSize, -HEMISPHERE_3V_CV, HEMISPHERE_MAX_CV);
             cvPosition[1] = constrain(stepY * stepSize, -HEMISPHERE_3V_CV, HEMISPHERE_MAX_CV);
@@ -45,6 +59,11 @@ public:
             screenPosition[0] = constrain(32 + stepX, 0, 64);
             screenPosition[1] = constrain(39 + stepY, 14, 64);
 
+            xHistory[currentCount] = screenPosition[0];
+            yHistory[currentCount] = screenPosition[1];
+
+            currentCount < 31 ? currentCount++ : currentCount = 0;
+            
             // Output
             Out(0, cvPosition[0]);
             Out(1, cvPosition[1]);  
@@ -60,6 +79,13 @@ public:
     }
 
     void OnEncoderMove(int direction) {
+        selected += direction;
+        if(selected > 1){
+            selected = 0;
+        }
+        else if(selected < 0){
+            selected = 1;
+        }
     }
         
     uint32_t OnDataRequest() {
@@ -89,16 +115,22 @@ private:
     int stepX, stepY;
     int stepSize;
     int cvPosition[2];
-    int screenPosition[2];
-    int startCV;
+    int8_t screenPosition[2];
+    int8_t xHistory[32];
+    int8_t yHistory[32];
+    int currentCount;
+    int selected;
+    const char* modeNames[2];
 
     void DrawInterface() {
-        gfxPrint(1, TopAlign(2),"X ");
-        gfxPrint(screenPosition[0]);
-        gfxPrint(1, TopAlign(22),"Y ");
-        gfxPrint(screenPosition[1]);
-        gfxPixel(screenPosition[0], screenPosition[1]);
+        gfxPrint(1, TopAlign(2), modeNames[selected]);
+        gfxCursor(1, TopAlign(12), 24);
 
+        for (int i = 0; i < 32; i++)
+        {
+            //gfxPixel(xHistory[i], yHistory[i]);
+            gfxCircle(xHistory[i], yHistory[i], 2);
+        }
     }
 
     int ProportionMidCV(int cv_value, int max_pixels) {

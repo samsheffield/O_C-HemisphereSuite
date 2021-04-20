@@ -30,7 +30,7 @@
 /* (Default is to disable Captain MIDI to make enough space for the additions to applets.)             */
 
 //#define ENABLE_APP_CAPTAIN_MIDI
-#define ENABLE_APP_DARKEST_TIMELINE
+//#define ENABLE_APP_DARKEST_TIMELINE
 //#define ENABLE_APP_PONG
 
 // Nandemo

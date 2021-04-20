@@ -26,6 +26,13 @@
 // Crushed audio out OUT A/C, Pass through audio on B/D
 // Defeat crushed signal Gate A/D
 
+/*
+select between crash and bitmask - btn press
+move cursor
+rotating amount
+add amount to crash cv but limit
+*/
+
 int crush = 1;
 
 class Crash : public HemisphereApplet {
@@ -36,11 +43,27 @@ public:
     }
 
     void Start() {
+        selected = 0;
+        depth = 13;
     }
 
     void Controller() {
+        
         if (!Gate(0)) {
-            crush = Proportion(In(1), HEMISPHERE_MAX_CV, 48);
+            
+            // 
+            if(Gate(1)){
+                selected = 0;
+                depth = Proportion(In(1), HEMISPHERE_MAX_CV, 14);
+                depth = constrain(depth, 1, 13);
+                mask = get_mask();
+            }
+            else{
+                selected = 1;
+                // 48 is a magic number that I just thought was good as a limit
+                crush = Proportion(In(1), HEMISPHERE_MAX_CV, 48);
+                crush = constrain(crush, 1, 48);
+            }
 
             if (++count >= crush) {
                 count = 0;
@@ -52,7 +75,10 @@ public:
                 cv = static_cast<int>(p_cv16) - HEMISPHERE_MAX_CV;
                 Out(0, cv);
             }
-        } else Out(0, In(0));
+        } else {
+            Out(0, In(0));
+        } 
+
         Out(1, In(0));
     }
 
@@ -64,20 +90,26 @@ public:
     void OnButtonPress() {
     }
 
-    void OnEncoderMove(int direction) {
-        depth = constrain(depth + direction, 1, 13);
-        mask = get_mask();
+    void OnEncoderMove(int direction) {    
+        if(selected == 0){
+            crush = constrain(crush + direction, 0, 48);
+            // I feel like I should be packing, unpacking but I don't understand it so...
+        }
+        else {
+            depth = constrain(depth + direction, 1, 13);
+            mask = get_mask();
+        }  
     }
         
     uint32_t OnDataRequest() {
         uint32_t data = 0;
-        Pack(data, PackLocation {3,4}, depth);
+        //Pack(data, PackLocation {3,4}, depth);
         return data;
     }
 
     void OnDataReceive(uint32_t data) {
-        depth = Unpack(data, PackLocation {3,4});
-        mask = get_mask();
+        //depth = Unpack(data, PackLocation {3,4});
+        //mask = get_mask();
     }
 
 protected:
@@ -91,7 +123,12 @@ protected:
     }
     
 private:
-    int depth = 13;
+    int8_t depth;
+
+    // which parameter is selected
+    int8_t selected;
+    int8_t cvSelector;
+    int offset;
 
     // Housekeeping
     byte count = 0;
@@ -101,16 +138,24 @@ private:
         gfxPrint(1, 15, "CV");
         // CV graphic indicator
         int w = Proportion(crush, 48, 59);
-        w = constrain(w, 1, 59);
+        w = constrain(w, 1, 56);
         gfxRect(3, 27, w, 6);
         gfxFrame(1, 25, 60, 10);
 
-        gfxPrint(1, 42, "Bit Depth");
+        gfxPrint(1, 41, "Bit Depth");
         // Bit Depth graphic indicator
         int b = Proportion(depth, 13, 56);
-        b = constrain(b, 2, 56);    
+        b = constrain(b, 1, 56);    
         gfxRect(3, 53, b, 6);
         gfxFrame(1, 51, 60, 10);
+
+        // Move cusor based on active paameter
+        if (selected == 0){
+            gfxCursor(1, 23, 18);
+        } 
+        else {
+            gfxCursor(1, 49, 60);
+        }
     }
 
     uint16_t get_mask() {
