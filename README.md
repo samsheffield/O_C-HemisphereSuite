@@ -1,7 +1,9 @@
 Hemisphere Suite: Alternate Alternate Firmware for Ornament and Crime (Nandemo Branch)
 ===
 
-### new stuff:
+### new stuff (in-progress):
+
+Nose - A simple noise generator. Out 1: auto, In 2 & Out 2: cv controlled
 
 Crash - VC controllable version of Dr Crusher (Applet)
 
