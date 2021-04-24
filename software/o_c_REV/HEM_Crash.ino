@@ -26,15 +26,6 @@
 // Crushed audio out OUT A/C, Pass through audio on B/D
 // Defeat crushed signal Gate A/D
 
-/*
-select between crash and bitmask - btn press
-move cursor
-rotating amount
-add amount to crash cv but limit
-*/
-
-int crush = 1;
-
 class Crash : public HemisphereApplet {
 public:
 
@@ -129,6 +120,9 @@ private:
     int8_t selected;
     int8_t cvSelector;
     int offset;
+
+    // Moved here
+    int crush = 1;
 
     // Housekeeping
     byte count = 0;
