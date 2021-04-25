@@ -11,7 +11,7 @@
 // * Category filtering is deprecated at 1.8, but I'm leaving the per-applet categorization
 // alone to avoid breaking forked codebases by other developers.
 
-#define HEMISPHERE_AVAILABLE_APPLETS 48
+#define HEMISPHERE_AVAILABLE_APPLETS 49
 
 //////////////////  id  cat   class name
 #define HEMISPHERE_APPLETS { \
@@ -36,6 +36,7 @@
     DECLARE_APPLET( 42, 0x11, EnvFollow), \
     DECLARE_APPLET( 29, 0x04, GateDelay), \
     DECLARE_APPLET( 17, 0x50, GatedVCA), \
+    DECLARE_APPLET( 104, 0x50, GateTest), \
     DECLARE_APPLET( 16, 0x80, LoFiPCM), \
     DECLARE_APPLET( 10, 0x44, Logic), \
     DECLARE_APPLET( 21, 0x01, LowerRenz), \
