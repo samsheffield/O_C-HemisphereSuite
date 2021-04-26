@@ -36,7 +36,7 @@
 
 OC::App available_apps[] = {
   DECLARE_APP('H','S', "Hemisphere", HEMISPHERE),
-  DECLARE_APP('G','A', "Gates", Gates),
+  DECLARE_APP('G','A', "Popcorn", Popcorn),
   #ifdef ENABLE_APP_CAPTAIN_MIDI
     DECLARE_APP('M','I', "Captain MIDI", MIDI),
   #endif
