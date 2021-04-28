@@ -26,6 +26,10 @@
 // Crushed audio out OUT A/C, Pass through audio on B/D
 // Defeat crushed signal Gate A/D
 
+// CHANGE TO
+// Press button to toggle between crushing and bitrate CV/Manual control
+// Start out in Crash
+
 class Crash : public HemisphereApplet {
 public:
 
@@ -79,6 +83,7 @@ public:
     }
 
     void OnButtonPress() {
+        selected = selected == 0 ? 1 : 0;
     }
 
     void OnEncoderMove(int direction) {    
@@ -109,7 +114,7 @@ protected:
         help[HEMISPHERE_HELP_DIGITALS] = "1=Disable";
         help[HEMISPHERE_HELP_CVS]      = "1=Input 2=Crush CV";
         help[HEMISPHERE_HELP_OUTS]     = "A=Crush B=Thru";
-        help[HEMISPHERE_HELP_ENCODER]  = "Bit Depth";
+        help[HEMISPHERE_HELP_ENCODER]  = "Toggle Manual";
         //                               "------------------" <-- Size Guide
     }
     
@@ -129,7 +134,8 @@ private:
     uint16_t mask = 0xffff;
     
     void DrawInterface() {
-        gfxPrint(1, 15, "CV");
+        gfxPrint(1, 15, "Crush");
+
         // CV graphic indicator
         int w = Proportion(crush, 48, 59);
         w = constrain(w, 1, 56);
@@ -145,7 +151,7 @@ private:
 
         // Move cusor based on active paameter
         if (selected == 0){
-            gfxCursor(1, 23, 18);
+            gfxCursor(1, 23, 36);
         } 
         else {
             gfxCursor(1, 49, 60);
