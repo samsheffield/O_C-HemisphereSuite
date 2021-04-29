@@ -419,6 +419,12 @@ protected:
         return prop;
     }
 
+    // often need a minimum
+    int ProportionCV(int cv_value, int min_pixels, int max_pixels) {
+        int prop = constrain(Proportion(cv_value, HEMISPHERE_MAX_CV, max_pixels), min_pixels, max_pixels);
+        return prop;
+    }
+
     /* Add value to a 32-bit storage unit at the specified location */
     void Pack(uint32_t &data, PackLocation p, uint32_t value) {
         data |= (value << p.location);

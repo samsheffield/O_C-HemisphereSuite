@@ -45,16 +45,12 @@ public:
     void Controller() {
         
         if (!Gate(0)) {
-            
-            // 
-            if(Gate(1)){
-                selected = 0;
+            if(selected == 0){
                 depth = Proportion(In(1), HEMISPHERE_MAX_CV, 14);
                 depth = constrain(depth, 1, 13);
                 mask = get_mask();
             }
             else{
-                selected = 1;
                 // 48 is a magic number that I just thought was good as a limit
                 crush = Proportion(In(1), HEMISPHERE_MAX_CV, 48);
                 crush = constrain(crush, 1, 48);
@@ -112,7 +108,7 @@ protected:
     void SetHelp() {
         //                               "------------------" <-- Size Guide
         help[HEMISPHERE_HELP_DIGITALS] = "1=Disable";
-        help[HEMISPHERE_HELP_CVS]      = "1=Input 2=Crush CV";
+        help[HEMISPHERE_HELP_CVS]      = "1=Input 2=CV";
         help[HEMISPHERE_HELP_OUTS]     = "A=Crush B=Thru";
         help[HEMISPHERE_HELP_ENCODER]  = "Toggle Manual";
         //                               "------------------" <-- Size Guide
@@ -134,28 +130,40 @@ private:
     uint16_t mask = 0xffff;
     
     void DrawInterface() {
-        gfxPrint(1, 15, "Crush");
+        gfxPrint(8, 27, "CRUSH");
+        gfxPrint(8, 47, "DEPTH");
 
         // CV graphic indicator
-        int w = Proportion(crush, 48, 59);
+        int w = Proportion(crush, 48, 56);
         w = constrain(w, 1, 56);
-        gfxRect(3, 27, w, 6);
-        gfxFrame(1, 25, 60, 10);
-
-        gfxPrint(1, 41, "Bit Depth");
+        gfxInvert(3, 25, w, 11);
+        //gfxRect(3, 27, w, 6);
+        
         // Bit Depth graphic indicator
         int b = Proportion(depth, 13, 56);
         b = constrain(b, 1, 56);    
-        gfxRect(3, 53, b, 6);
-        gfxFrame(1, 51, 60, 10);
-
+        gfxInvert(3, 45, b, 11);
+        
         // Move cusor based on active paameter
         if (selected == 0){
-            gfxCursor(1, 23, 36);
+            gfxFrame(1, 23, 60, 15);
         } 
         else {
-            gfxCursor(1, 49, 60);
+           gfxFrame(1, 43, 60, 15);
         }
+
+
+    /*
+        void DrawOutput() {
+        gfxPrint(1, 38, "x");
+        gfxPrint(1, 50, "y");
+        ForEachChannel(ch)
+        {
+            int w = ProportionCV(ViewOut(ch), 62);
+            gfxInvert(1, 38 + (12 * ch), w, 10);
+        }
+        }
+    */
     }
 
     uint16_t get_mask() {

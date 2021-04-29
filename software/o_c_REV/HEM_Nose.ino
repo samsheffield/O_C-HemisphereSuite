@@ -27,6 +27,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// TODO:
+// Gate muting
+
 class Nose : public HemisphereApplet {
 public:
 
@@ -40,6 +43,10 @@ public:
     void Controller() {
         Out(0, GenerateNoise());
         Out(1, GenerateCVNoise(1));
+
+        noiseSamples[sampleCount % 8] = ViewOut(0);
+        noiseCVSamples[sampleCount % 8] = ViewOut(1);
+        sampleCount++;
     }
 
     void View() {
@@ -68,18 +75,26 @@ public:
 protected:
     void SetHelp() {
         //                               "------------------" <-- Size Guide
-        help[HEMISPHERE_HELP_DIGITALS] = "Digital in help";
-        help[HEMISPHERE_HELP_CVS]      = "CV in help";
-        help[HEMISPHERE_HELP_OUTS]     = "Out help";
-        help[HEMISPHERE_HELP_ENCODER]  = "123456789012345678";
+        help[HEMISPHERE_HELP_DIGITALS] = "";
+        help[HEMISPHERE_HELP_CVS]      = "2=Noise CV";
+        help[HEMISPHERE_HELP_OUTS]     = "1=Noise 2=CV";
+        help[HEMISPHERE_HELP_ENCODER]  = "";
         //                               "------------------" <-- Size Guide
     }
     
 private:
     int cursor;
+    int noiseSamples[8];
+    int noiseCVSamples[8];
+    int sampleCount;
     
     void DrawInterface() {
-        gfxSkyline();
+        // Static noise visualization
+        for (int i = 0; i < 8; i++)
+        {
+            gfxFrame((4 * i), map(noiseSamples[i], -HEMISPHERE_3V_CV, HEMISPHERE_3V_CV, 63, 10), 2, 2);
+            gfxFrame(32 + (4 * i), map(noiseCVSamples[i], 0, HEMISPHERE_3V_CV, 64, 10), 2, 2);
+        }      
     }
 
     int GenerateNoise(){
@@ -87,7 +102,7 @@ private:
     }
 
     int GenerateCVNoise(int ch){
-        return random(0,2) * In(ch);
+        return random(0, Proportion(In(ch), HEMISPHERE_MAX_CV, (12 << 7) * 3));
     }
 };
 
