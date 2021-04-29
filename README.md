@@ -3,13 +3,16 @@ Hemisphere Suite: Alternate Alternate Firmware for Ornament and Crime (Nandemo)
 
 ### new stuff (in-progress):
 
-Popcorn - 4 channel random trigger generator. Needs a bunch of UI work. (Application)
+Nose - A simple noise generator. Static and CV shaped channels. (Applet)
 
-Nose - A simple noise generator. Out 1: auto, In 2 & Out 2: cv controlled. (Applet)
+Crash - CV bitcrusher based on Dr. Crusher. (Applet)
 
-Crash - VC controllable version of Dr Crusher. UX is confusing and will probably be reworked. (Applet)
+Brownie - An attempt at a simple walking algorithm. Not finished. Not particularly musical either. (Applet)
 
-Juggler - Weird 3-way switch that can pass CV (Independently on B, C, and D, and sequentially? mixed? on A). There's a gated out mode too. (Application)
+Popcorn - 4 channel Euclidean trigger generator. Needs a bunch of UI work but it's fun. (Application)
+
+Juggler - Weird 3-way switch that can pass CV (Independently on B, C, and D, and sequentially? mixed? on A). There's a gated out mode too. Not sure where I'm going with this yet (Application)
+
 
 
 ### firmware:
