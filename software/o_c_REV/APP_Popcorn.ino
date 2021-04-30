@@ -165,34 +165,24 @@ private:
     uint32_t display_timeout[4];
 
     void DrawInterface() {
-        
-        // gfxPrint(1, TopAlign(2), 0);
-        // gfxPrint(1, BottomAlign(12), beats[0]);
-        // gfxPrint(17, BottomAlign(12), rotation[0]);
-
-        // gfxPrint(31, TopAlign(2), 1);
-        // gfxPrint(31, TopAlign(12), beats[1]);
-        // gfxPrint(47, TopAlign(22), rotation[1]);
-
-        // gfxPrint(61, TopAlign(2), 2);
-        // gfxPrint(61, TopAlign(12), beats[2]);
-        // gfxPrint(77, TopAlign(22), rotation[2]);
-
-        // gfxPrint(91, TopAlign(2), 3);
-        // gfxPrint(91, TopAlign(12), beats[3]);
-        // gfxPrint(107, TopAlign(22), rotation[3]);
 
         //
         ForEachChannelAll(ch){
-            //gfxPrint((ch*32) + 1, BottomAlign(12), beats[ch]);
-            //gfxPrint((ch*32) + 17, BottomAlign(12), rotation[ch]);
 
             // TODO: Only show if enabled
-            gfxLine (ch * 32, BottomAlign(12), (ch * 32) + constrain(beats[ch]-1, 0, 16) * 2, BottomAlign(12));
-            gfxDottedLine (ch * 32, BottomAlign(12), (ch * 32) + 30, BottomAlign(12));
+            if(ch == currentChannel){
+                //gfxRect ((ch * 32) + constrain(beats[ch]-1, 0, 16) * 2, BottomAlign(12), 2, 2);
+                gfxLine (ch * 32, BottomAlign(12), (ch * 32) + constrain(beats[ch], 0, 16) * 2, BottomAlign(12));
+                gfxDottedLine (ch * 32, BottomAlign(6), (ch * 32) + constrain(rotation[ch], 0, 16) * 2, BottomAlign(6));
+                //gfxRect ((ch * 32) + constrain(rotation[ch]-1, 0, 16) * 2, BottomAlign(6), 2, 2);
+            }
+            
+            //
+            //gfxDottedLine (ch * 32, BottomAlign(12), (ch * 32) + 30, BottomAlign(12));
 
-            gfxLine (ch * 32, BottomAlign(6), (ch * 32) + constrain(rotation[ch]-1, 0, 16) * 2, BottomAlign(6));
-            gfxDottedLine (ch * 32, BottomAlign(6), (ch * 32) + 30, BottomAlign(6));
+            
+            //
+            //gfxDottedLine (ch * 32, BottomAlign(6), (ch * 32) + 30, BottomAlign(6));
 
             // Visualization
             if(ViewOut(ch) > 0){   
@@ -209,8 +199,10 @@ private:
             
             // UI framing of selected channel
             if(ch == currentChannel){
-                gfxDottedLine (ch * 32, BottomAlign(0), (ch * 32) + 30, BottomAlign(0));
-                if(active[currentChannel]) gfxLine (ch * 32, BottomAlign(0), (ch * 32) + 30, BottomAlign(0));
+               // gfxRect(11 + (ch * 32), BottomAlign(0), 6, 2);
+                gfxDottedLine (11 + ch * 32, BottomAlign(0), 11 + (ch * 32) + 6, BottomAlign(0));
+                if(active[currentChannel]) gfxRect(11 + (ch * 32), BottomAlign(0), 6, 2);
+                //gfxLine (ch * 32, BottomAlign(0), (ch * 32) + 30, BottomAlign(0));
                 //gfxFrame (ch * 32, TopAlign(1), 30, 49);
                 //if(active[currentChannel]) gfxFrame (1+(ch * 32), TopAlign(2), 28, 47);
             } 
