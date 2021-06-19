@@ -37,6 +37,10 @@
 OC::App available_apps[] = {
   DECLARE_APP('H','S', "Hemisphere", HEMISPHERE),
   DECLARE_APP('G','A', "Popcorn", Popcorn),
+    // Nandemo
+  #ifdef ENABLE_APP_JUGGLER
+    DECLARE_APP('J','U', "Juggler", Juggler),
+  #endif
   #ifdef ENABLE_APP_CAPTAIN_MIDI
     DECLARE_APP('M','I', "Captain MIDI", MIDI),
   #endif
@@ -51,12 +55,6 @@ OC::App available_apps[] = {
   #ifdef ENABLE_APP_PONG
     DECLARE_APP('P','O', "Pong", PONGGAME),
   #endif
-
-  // Nandemo
-  #ifdef ENABLE_APP_JUGGLER
-    DECLARE_APP('J','U', "Juggler", Juggler),
-  #endif
-
   DECLARE_APP('B','R', "Backup / Restore", Backup),
   DECLARE_APP('S','E', "Setup / About", Settings),
 };
