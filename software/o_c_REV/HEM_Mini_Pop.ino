@@ -19,7 +19,7 @@
 // SOFTWARE.
 
 #include "bjorklund.h"
-#define HEM_MINIPOP_MAX_LENGTH 16
+#define HEM_MINIPOP_MAX_LENGTH 32
 
 class MiniPop : public HemisphereApplet {
 public:
@@ -45,18 +45,18 @@ public:
         // CV control over active notes from 0-5v
         if(DetentedIn(0) > 0)
         {
-            beats[0] = ProportionCV(In(0), HEM_MINIPOP_MAX_LENGTH);
+            beats[0] = ProportionCV(In(0), HEM_MINIPOP_MAX_LENGTH+1);
         }
         if(DetentedIn(1) > 0)
         {
-            beats[1] =ProportionCV(In(1), HEM_MINIPOP_MAX_LENGTH);
+            beats[1] =ProportionCV(In(1), HEM_MINIPOP_MAX_LENGTH+1);
         }
 
         // Generate patterns when clock on 1 is present
         if (Clock(0)) {
             ForEachChannel(ch)
             {
-                pattern[ch] = EuclideanPattern(HEM_MINIPOP_MAX_LENGTH-1, beats[ch], rotation[ch]);
+                pattern[ch] = EuclideanPattern(length[ch] - 1, beats[ch], rotation[ch]);
                 int sb = step % length[ch];
                 if ((pattern[ch] >> sb) & 0x01) {
                     ClockOut(ch);
@@ -64,7 +64,7 @@ public:
             }
 
             // Keeps this going forever?
-            if (++step >= length[0] * length[1] * length[2] * length[3]) step = 0;
+            if (++step >= length[0] * length[1]) step = 0;
         }
     }
 
@@ -90,7 +90,7 @@ public:
         {
         case 0:
             beats[0] += direction;
-            beats[0] = constrain(beats[0], 1, HEM_MINIPOP_MAX_LENGTH);
+            beats[0] = constrain(beats[0], 0, HEM_MINIPOP_MAX_LENGTH);
             break;
         case 1:
             rotation[0] += direction;
@@ -98,7 +98,7 @@ public:
             break;
         case 2:
             beats[1] += direction;
-            beats[1] = constrain(beats[1], 1, HEM_MINIPOP_MAX_LENGTH);
+            beats[1] = constrain(beats[1], 0, HEM_MINIPOP_MAX_LENGTH);
             break;
         case 3:
             rotation[1] += direction;
@@ -132,6 +132,7 @@ protected:
     }
     
 private:
+
     int step;
     int selected;
     uint32_t pattern[2];
