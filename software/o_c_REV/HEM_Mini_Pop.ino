@@ -56,7 +56,7 @@ public:
         if (Clock(0)) {
             ForEachChannel(ch)
             {
-                pattern[ch] = EuclideanPattern(length[ch] - 1, beats[ch], rotation[ch]);
+                pattern[ch] = EuclideanPattern(HEM_MINIPOP_MAX_LENGTH-1, beats[ch], rotation[ch]);
                 int sb = step % length[ch];
                 if ((pattern[ch] >> sb) & 0x01) {
                     ClockOut(ch);
@@ -90,7 +90,7 @@ public:
         {
         case 0:
             beats[0] += direction;
-            beats[0] = constrain(beats[0], 0, HEM_MINIPOP_MAX_LENGTH);
+            beats[0] = constrain(beats[0], 1, HEM_MINIPOP_MAX_LENGTH);
             break;
         case 1:
             rotation[0] += direction;
@@ -98,7 +98,7 @@ public:
             break;
         case 2:
             beats[1] += direction;
-            beats[1] = constrain(beats[1], 0, HEM_MINIPOP_MAX_LENGTH);
+            beats[1] = constrain(beats[1], 1, HEM_MINIPOP_MAX_LENGTH);
             break;
         case 3:
             rotation[1] += direction;
